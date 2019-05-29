@@ -1,0 +1,144 @@
+---
+title: "rmd_boxplots"
+author: "Diego Quezada-Munoz"
+date: "May 20, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Data Exploration
+
+We read in the data ...
+```{r}
+data = read.csv(file.choose()) # Select brca1.csv
+```
+
+
+Here 
+```{r}
+head(data, 15)
+```
+
+```{r}
+nrow(data)
+```
+
+## Data Exploration
+
+
+```{r}
+table(data$clinvar)
+```
+
+```{r}
+d = data[data$clinvar != 'variant_of_unknown_significance' & data$clinvar != 'Uncertain_significance' & data$clinvar != 'variant_of_unknown_significance,Uncertain_significance' & data$clinvar != 'Uncertain_significance,not_provided' & data$clinvar != 'Pathogenic,Benign,Uncertain_significance,Likely_benign' & data$clinvar != 'not_provided' & data$clinvar != 'no_known_pathogenicity' & data$clinvar != 'Likely_pathogenic,Likely_benign,Uncertain_significance' & data$clinvar != 'Likely_pathogenic,Benign,Uncertain_significance,not_provided,probably_not_pathogenic,Likely_benign',]
+```
+
+
+After removing all variants with 
+```{r}
+nrow(d)
+```
+
+
+```{r}
+b = grepl('enign', d$clinvar)
+benign = d[b,]
+nrow(benign)
+rownames(benign) <- seq(length=nrow(benign))
+```
+
+
+```{r}
+p = !b
+pathogenic = d[p,]
+nrow(pathogenic)
+rownames(pathogenic) <- seq(length=nrow(pathogenic))
+```
+
+
+```{r}
+benign$pPrior2 = as.numeric(levels(benign$pPrior2))[benign$pPrior2]
+str(benign)
+```
+
+
+```{r}
+pathogenic$pPrior2 = as.numeric(levels(pathogenic$pPrior2))[pathogenic$pPrior2]
+str(pathogenic)
+```
+
+
+```{r}
+benign = benign[!grepl("X", benign$amino_acid_change),]
+nrow(benign)
+```
+
+
+```{r}
+pathogenic = pathogenic[!grepl("X",pathogenic$amino_acid_change),]
+nrow(pathogenic)
+```
+
+
+```{r}
+bPath = benign$pPrior2 > .2
+sum(bPath, na.rm=TRUE)
+```
+
+```{r}
+bBen = benign$pPrior2 < .05
+sum(bBen, na.rm=TRUE)
+```
+
+
+```{r}
+pPath = pathogenic$pPrior2 > .2
+sum(pPath, na.rm=TRUE)
+
+```
+
+
+```{r}
+pBen = pathogenic$pPrior2 < .05
+sum(pBen, na.rm=TRUE)
+
+```
+
+
+```{r}
+par(mfrow = c(2, 2))
+boxplot(benign[bBen,]$rsa, main="ClinVar: benign | UCSC: benign", ylim=c(0,1), ylab = "RSA Score")
+boxplot(benign[bPath,]$rsa, main="ClinVar: benign | UCSC: pathogenic", ylim=c(0,1), ylab = "RSA Score")
+boxplot(pathogenic[pBen,]$rsa, main="ClinVar: pathogenic | UCSC: benign", ylim=c(0,1), ylab = "RSA Score")
+boxplot(pathogenic[pPath,]$rsa, main="ClinVar: pathogenic | UCSC: pathogenic", ylim=c(0,1), ylab = "RSA Score")
+```
+
+```{r}
+medians = matrix(c(
+quantile(benign[bBen,]$rsa, c(.5), na.rm = TRUE),
+quantile(benign[bPath,]$rsa, c(.5), na.rm = TRUE),
+quantile(pathogenic[pBen,]$rsa, c(.5), na.rm = TRUE),
+quantile(pathogenic[pPath,]$rsa, c(.5), na.rm = TRUE)), 2, 2)
+medians
+```
+
+
+```{r}
+par(mfrow = c(1, 2))
+boxplot(benign$rsa, main="ClinVar: benign", ylim=c(0,1), ylab = "RSA Score")
+boxplot(pathogenic$rsa, main="ClinVar: pathogenic", ylim=c(0,1), ylab = "RSA Score")
+```
+
+
+```{r}
+summary(benign$rsa)
+```
+
+
+```{r}
+summary(pathogenic$rsa)
+```

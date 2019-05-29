@@ -1,0 +1,39 @@
+data = read.csv(file.choose()) # Select brca1.csv
+nrow(data)
+head(data)
+table(data$clinvar)
+
+d = data[data$clinvar != 'variant_of_unknown_significance' & data$clinvar != 'Uncertain_significance' & data$clinvar != 'variant_of_unknown_significance,Uncertain_significance' & data$clinvar != 'Uncertain_significance,not_provided' & data$clinvar != 'Pathogenic,Benign,Uncertain_significance,Likely_benign' & data$clinvar != 'not_provided' & data$clinvar != 'no_known_pathogenicity' & data$clinvar != 'Likely_pathogenic,Likely_benign,Uncertain_significance' & data$clinvar != 'Likely_pathogenic,Benign,Uncertain_significance,not_provided,probably_not_pathogenic,Likely_benign',]
+nrow(d)
+head(d)
+table(d$clinvar)
+
+
+b = grepl('enign', d$clinvar)
+benign = d[b,]
+nrow(benign)
+rownames(benign) <- seq(length=nrow(benign))
+
+p = !b
+pathogenic = d[p,]
+nrow(pathogenic)
+rownames(pathogenic) <- seq(length=nrow(pathogenic))
+
+
+par(mfrow=c(1,2))
+boxplot(pathogenic$rsa, main="rsa of brca1 pathogenic variants")
+boxplot(benign$rsa, main="rsa of benign brca1 variants")
+
+benign$pPrior2 = as.numeric(levels(benign$pPrior2))[benign$pPrior2]
+str(benign)
+pathogenic$pPrior2 = as.numeric(levels(pathogenic$pPrior2))[pathogenic$pPrior2]
+str(pathogenic)
+
+pathogenic = pathogenic[!grepl("X",pathogenic$amino_acid_change),]
+nrow(pathogenic)
+
+par(mfrow = c(2, 2))
+boxplot(benign$rsa ~ benign$pPrior2 < .05, main="brca1 ClinVar Classification: benign", sub = "Protein Prior < .05 (Correct Prediction)")
+boxplot(benign$rsa ~ benign$pPrior2 > .2, main="brca1 ClinVar Classification: benign", sub = "Protein Prior > .2 (Incorrect Prediction)")
+boxplot(pathogenic$rsa ~ pathogenic$pPrior2 < .05, main="brca1 ClinVar Classification: pathogenic", sub = "Protein Prior < .05(Incorrect Prediction)")
+boxplot(pathogenic$rsa ~ pathogenic$pPrior2 > .2, main="brca1 ClinVar Classification: pathogenic", sub = "Protein Prior > .2(Correct Prediction)")
