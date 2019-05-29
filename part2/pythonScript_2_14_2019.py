@@ -4,10 +4,10 @@ import scipy as sp
 ucsc = pd.read_table("built_with_change_types_2_14_2019.tsv", sep='\t', header=0)
 variants = pd.read_csv('allBRCAVariantsRSA.csv', index_col=None)
 
-f = open("write.txt", "a")
+f = open("brca1_scores.csv", "a")
 
 chromosome = 0
-for i in range(16700, len(variants)):
+for i in range(0, len(variants)):
     cDNA = variants['cDNA'][i]
     print(cDNA)
     if(variants['sequenceID'][i] == "NP_009225"):
