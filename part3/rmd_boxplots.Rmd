@@ -1,6 +1,6 @@
 ---
-title: "rmd_boxplots"
-author: "Diego Quezada-Munoz"
+title: "BRCA1 and Relative Solvent Accessibility"
+author: "Melissa Cline and Diego Quezada-Munoz"
 date: "May 20, 2019"
 output: html_document
 ---
@@ -11,39 +11,41 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Data Exploration
 
-We read in the data ...
+We read in the data from the CSV File that was produce by the previous parts in this project.
 ```{r}
 data = read.csv(file.choose()) # Select brca1.csv
 ```
 
 
-Here 
+Here are the first 15 instances of the "brca1.csv" data set.
 ```{r}
 head(data, 15)
 ```
 
+The number of variants in this data set is 3338.
 ```{r}
 nrow(data)
 ```
 
 ## Data Exploration
 
-
+In the following long output we see all the classifications provided by ClinVar.
 ```{r}
 table(data$clinvar)
 ```
 
+In this code we exclude variants that have contradicting and unknown classifications.
 ```{r}
 d = data[data$clinvar != 'variant_of_unknown_significance' & data$clinvar != 'Uncertain_significance' & data$clinvar != 'variant_of_unknown_significance,Uncertain_significance' & data$clinvar != 'Uncertain_significance,not_provided' & data$clinvar != 'Pathogenic,Benign,Uncertain_significance,Likely_benign' & data$clinvar != 'not_provided' & data$clinvar != 'no_known_pathogenicity' & data$clinvar != 'Likely_pathogenic,Likely_benign,Uncertain_significance' & data$clinvar != 'Likely_pathogenic,Benign,Uncertain_significance,not_provided,probably_not_pathogenic,Likely_benign',]
 ```
 
 
-After removing all variants with 
+We then have 1,572 variants remaining. 
 ```{r}
 nrow(d)
 ```
 
-
+we are able to pickout the variants with a benign classification. There is a total of 1008 benign variants.
 ```{r}
 b = grepl('enign', d$clinvar)
 benign = d[b,]
@@ -51,7 +53,7 @@ nrow(benign)
 rownames(benign) <- seq(length=nrow(benign))
 ```
 
-
+There is a total of 564 pathogenic variants. 
 ```{r}
 p = !b
 pathogenic = d[p,]

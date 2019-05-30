@@ -1,7 +1,9 @@
-# BRCA1/BRCA2 and Relative Solvent Accessibillity
+# Part 1
 
-This is a repository for the generation of the boxplots in the "final_products" folder.
+## Part a
+In this part of the project, we use the following files to produce the "allBRCAVariantsRSA" CSV file:
+brca1variants(TSV File) - contains all possible brca1 mutations
+brca2variants(TSV File) - contains all possible brca2 mutations
+brcaVariants(CSV File) - contains all possible brca1 mutations
 
-## UPDATE: May 29, 2019
 
-Only BRCA1 boxplots are available.
