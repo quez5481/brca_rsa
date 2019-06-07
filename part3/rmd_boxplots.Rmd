@@ -74,43 +74,44 @@ str(pathogenic)
 ```
 
 
+Here we remove the variants that result in a termination codon, from the ClinVar classified benign variants.
 ```{r}
 benign = benign[!grepl("X", benign$amino_acid_change),]
 nrow(benign)
 ```
 
-
+Here we remove the variants that result in a termination codon, from the ClinVar classified pathogenic variants.
 ```{r}
 pathogenic = pathogenic[!grepl("X",pathogenic$amino_acid_change),]
 nrow(pathogenic)
 ```
 
-
+The number of variants classified as benign by ClinVar and have a UCSC Protein Prior Socre greater than .2
 ```{r}
 bPath = benign$pPrior2 > .2
 sum(bPath, na.rm=TRUE)
 ```
-
+The number of variants classified as benign by ClinVar and have a UCSC Protein Prior Socre less than .05
 ```{r}
 bBen = benign$pPrior2 < .05
 sum(bBen, na.rm=TRUE)
 ```
 
-
+The number of variants classified as pathogenic by ClinVar and have a UCSC Protein Prior Socre greater than .2
 ```{r}
 pPath = pathogenic$pPrior2 > .2
 sum(pPath, na.rm=TRUE)
 
 ```
 
-
+The number of variants classified as pathogenic by ClinVar and have a UCSC Protein Prior Socre less than .05
 ```{r}
 pBen = pathogenic$pPrior2 < .05
 sum(pBen, na.rm=TRUE)
 
 ```
 
-
+The following boxplots show the distribution of Relative Solvent Accessibility Scores of the four previous types of variants. 
 ```{r}
 par(mfrow = c(2, 2))
 boxplot(benign[bBen,]$rsa, main="ClinVar: benign | UCSC: benign", ylim=c(0,1), ylab = "RSA Score")
@@ -119,6 +120,7 @@ boxplot(pathogenic[pBen,]$rsa, main="ClinVar: pathogenic | UCSC: benign", ylim=c
 boxplot(pathogenic[pPath,]$rsa, main="ClinVar: pathogenic | UCSC: pathogenic", ylim=c(0,1), ylab = "RSA Score")
 ```
 
+The following are the medians of the previous boxplots. 
 ```{r}
 medians = matrix(c(
 quantile(benign[bBen,]$rsa, c(.5), na.rm = TRUE),
@@ -128,19 +130,20 @@ quantile(pathogenic[pPath,]$rsa, c(.5), na.rm = TRUE)), 2, 2)
 medians
 ```
 
-
+The Distribution of Relative Solvent Accessibility by ClinVar classification.
 ```{r}
 par(mfrow = c(1, 2))
 boxplot(benign$rsa, main="ClinVar: benign", ylim=c(0,1), ylab = "RSA Score")
 boxplot(pathogenic$rsa, main="ClinVar: pathogenic", ylim=c(0,1), ylab = "RSA Score")
 ```
 
-
+Summary Statistics for the benign variants. 
 ```{r}
 summary(benign$rsa)
 ```
 
 
+Summary Statistics for the pathogenic variants. 
 ```{r}
 summary(pathogenic$rsa)
 ```
